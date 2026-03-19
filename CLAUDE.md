@@ -11,10 +11,11 @@ A monthly budget management SPA with no backend — all data stored in localStor
 ## Dev Commands
 
 ```bash
-npm install                          # install dependencies (use --legacy-peer-deps)
-npm run dev                          # start dev server (localhost:5173)
-npm run build                        # build + deploy → updates index.html + assets/ in project root
-npm run preview                      # preview production build
+npm install          # install dependencies
+npm run dev          # start dev server (localhost:5173)
+npm run build        # build + deploy → updates index.html + assets/ in project root
+npm run lint         # run ESLint
+npm run preview      # preview production build
 ```
 
 Served at **https://www.amir.com/budget-app/**. Build uses `index.src.html` as the Vite entry (never overwritten), outputs to `dist/`, then copies `dist/index.src.html → index.html` and `dist/assets/ → assets/` for serving.
@@ -34,6 +35,7 @@ src/
   constants.js          — CATEGORIES array + CAT_MAP lookup
   storage.js            — localStorage get/add/delete helpers
   utils.js              — monthKey, fmt (currency), budgetStatus, statusColor
+  csvParse.js           — CSV import parsing logic
   App.jsx               — root; owns all state
   components/
     MonthNav.jsx        — prev/next month buttons
@@ -42,6 +44,9 @@ src/
     TransactionList.jsx — unified income+expense list, sorted by date
     AddEntryModal.jsx   — sheet modal for adding income or expense
     BudgetLimitsModal.jsx — sheet modal for setting per-category limits
+    CategoriesModal.jsx — sheet modal for managing categories
+    ImportModal.jsx     — sheet modal for CSV import
+    YearView.jsx        — yearly summary view
 ```
 
 ## Core Data Model

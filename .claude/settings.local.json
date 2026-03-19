@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(npm run:*)",
+      "Read(//etc/nginx/**)",
+      "Read(//etc/apache2/**)",
+      "Bash(nginx -T 2>/dev/null | head -60 || apache2ctl -S 2>/dev/null || cat /etc/nginx/nginx.conf 2>/dev/null | head -40)",
+      "Bash(systemctl status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(GIT_TERMINAL_PROMPT=0 git push https://github.com/amiryeminy/budget-app.git main 2>&1)",
+      "Bash(git remote:*)"
+    ]
+  }
+}

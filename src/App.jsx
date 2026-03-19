@@ -16,6 +16,7 @@ import AddEntryModal     from './components/AddEntryModal';
 import BudgetLimitsModal from './components/BudgetLimitsModal';
 import ImportModal       from './components/ImportModal';
 import CategoriesModal   from './components/CategoriesModal';
+import YearView          from './components/YearView';
 
 export default function App() {
   const [month,      setMonth]      = useState(() => monthKey(new Date()));
@@ -24,8 +25,10 @@ export default function App() {
   const [limits,     setLimits]     = useState(() => getLimits());
   const [categories, setCategories] = useState(() => getCategories(DEFAULT_CATEGORIES));
   const [modal,      setModal]      = useState(null);
+  const [view,       setView]       = useState('month'); // 'month' | 'year'
 
   const catMap = makeCatMap(categories);
+  const year   = month.slice(0, 4);
 
   const changeMonth = useCallback(m => {
     setMonth(m);
@@ -97,7 +100,7 @@ export default function App() {
             </h1>
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginLeft: 38 }}>
-            Monthly spending tracker
+            Spending tracker
           </p>
         </div>
 
@@ -120,30 +123,62 @@ export default function App() {
         </div>
       </header>
 
-      {/* ── Month navigation ───────────────────── */}
-      <div className="anim-fade-up d1" style={{ marginBottom: '1.75rem' }}>
-        <MonthNav month={month} onChange={changeMonth} />
+      {/* ── View toggle + navigation ───────────── */}
+      <div className="anim-fade-up d1" style={{ marginBottom: '1.75rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Toggle */}
+        <div style={{ display: 'flex', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 9, padding: 3, gap: 2 }}>
+          {['month', 'year'].map(v => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              style={{
+                background: view === v ? 'var(--amber)' : 'transparent',
+                color: view === v ? '#09090f' : 'var(--muted)',
+                border: 'none', borderRadius: 7, padding: '0.3rem 0.85rem',
+                cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600,
+                fontFamily: 'DM Sans', textTransform: 'capitalize',
+                transition: 'background 0.2s, color 0.2s',
+              }}
+            >{v === 'month' ? 'Monthly' : 'Yearly'}</button>
+          ))}
+        </div>
+
+        {/* Navigation */}
+        {view === 'month' ? (
+          <MonthNav month={month} onChange={changeMonth} />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button className="btn-icon" onClick={() => changeMonth(`${Number(year) - 1}-${month.slice(5)}`)} title="Previous year">‹</button>
+            <span className="font-serif" style={{ fontSize: '1.15rem', minWidth: 60, textAlign: 'center' }}>{year}</span>
+            <button className="btn-icon" onClick={() => changeMonth(`${Number(year) + 1}-${month.slice(5)}`)} title="Next year">›</button>
+          </div>
+        )}
       </div>
 
-      {/* ── Summary cards ──────────────────────── */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <SummaryCards income={income} expenses={expenses} />
-      </div>
+      {/* ── Monthly view ───────────────────────── */}
+      {view === 'month' && (
+        <>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <SummaryCards income={income} expenses={expenses} />
+          </div>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <CategoryBreakdown expenses={expenses} limits={limits} categories={categories} delay="d5" />
+          </div>
+          <TransactionList
+            income={income}
+            expenses={expenses}
+            catMap={catMap}
+            onDeleteIncome={handleDeleteIncome}
+            onDeleteExpense={handleDeleteExpense}
+            delay="d6"
+          />
+        </>
+      )}
 
-      {/* ── Category breakdown + chart ─────────── */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <CategoryBreakdown expenses={expenses} limits={limits} categories={categories} delay="d5" />
-      </div>
-
-      {/* ── Transaction list ───────────────────── */}
-      <TransactionList
-        income={income}
-        expenses={expenses}
-        catMap={catMap}
-        onDeleteIncome={handleDeleteIncome}
-        onDeleteExpense={handleDeleteExpense}
-        delay="d6"
-      />
+      {/* ── Yearly view ────────────────────────── */}
+      {view === 'year' && (
+        <YearView year={year} categories={categories} limits={limits} />
+      )}
 
       {/* ── Modals ─────────────────────────────── */}
       {modal === 'income' && (

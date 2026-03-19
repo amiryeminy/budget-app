@@ -13,7 +13,7 @@ function CustomTooltip({ active, payload }) {
   );
 }
 
-export default function CategoryBreakdown({ expenses, limits, categories, delay = 'd5' }) {
+export default function CategoryBreakdown({ expenses, limits, categories, delay = 'd5', titleOverride }) {
   const data = categories.map(cat => {
     const spent = expenses.filter(e => e.category === cat.id).reduce((s, e) => s + Number(e.amount), 0);
     const limit = Number(limits[cat.id] || 0);
@@ -33,7 +33,7 @@ export default function CategoryBreakdown({ expenses, limits, categories, delay 
     <div className={`card anim-fade-up ${delay}`} style={{ padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1.5rem' }}>
         <span className="amber-line" />
-        <h2 className="font-serif" style={{ fontSize: '1.1rem', fontWeight: 400 }}>Spending by Category</h2>
+        <h2 className="font-serif" style={{ fontSize: '1.1rem', fontWeight: 400 }}>{titleOverride || 'Spending by Category'}</h2>
       </div>
 
       {/* Bar Chart */}
